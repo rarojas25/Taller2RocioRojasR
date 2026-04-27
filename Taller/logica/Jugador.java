@@ -54,7 +54,9 @@ public class Jugador {
 	public void setPokemones(ArrayList<Pokemon> pokemones) {
 		this.pokemones = pokemones;
 	}
-	
+	public void setMedallas(int medallas) {
+		this.medallas = medallas;
+	}
 	
 	
 }
