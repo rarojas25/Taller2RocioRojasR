@@ -15,7 +15,7 @@ public class Combate {
 	}
 	
 	public boolean retarGimnasio(Jugador jugador, Gimnasio gimnasio) {
-		System.out.println("/nDesafiando a " + gimnasio.getLider() + "!!");
+		System.out.println("/n Desafiando a " + gimnasio.getLider() + "!!");
 		
 		ArrayList<String> nombresRival = gimnasio.getNombresPokemon();
 		
@@ -23,7 +23,7 @@ public class Combate {
 			Pokemon rival = buscarPokemonRival(nombresRival.get(i));
 			if(rival == null) continue;
 			
-			System.out.println(gimnasio.getLider() + "saca a " + rival.getNombre() + "!");
+			System.out.println(gimnasio.getLider() + " saca a " + rival.getNombre() + "!");
 			
 			Pokemon activo = elegirPokemonActivo(jugador);
 			if(activo == null) {
@@ -54,10 +54,10 @@ public class Combate {
 		}
 	
 		public boolean retarAltoMando(Jugador jugador, ArrayList<MiembroAltoMando> altoMando) {
-			System.out.println("n/-- DESAFIO AL ALTO MANDO --");
+			System.out.println("n/ -- DESAFIO AL ALTO MANDO --");
 		
 			for(MiembroAltoMando miembro : altoMando) {
-				System.out.println("n/Desafiando a " + miembro.getNombre() + "!!");
+				System.out.println("n/ Desafiando a " + miembro.getNombre() + "!!");
 			
 			for(String nombreRival : miembro.getNombresPokemon()) {
 				Pokemon rival = buscarPokemonRival(nombreRival);
@@ -94,7 +94,7 @@ public class Combate {
 		
 		private boolean ejecutarCombate(Jugador jugador, Pokemon activo, Pokemon rival) {
 			while(true) {
-				System.out.println("/nQue deseas hacer?");
+				System.out.println("/n Que deseas hacer?");
 				System.out.println("1) Atacar");
 				System.out.println("2) Cambiar de pokemon");
 				System.out.println("3) Rendirse");
@@ -143,13 +143,13 @@ public class Combate {
 			}else if(multiplicador == 0.5) {
 				System.out.println(jugador.getNombre() + " no es efectivo contra " + rival.getNombre() + "!");
 			}else if(multiplicador == 0.0){
-				System.out.println(jugador.getNombre() + "no tiene efecto contra "+ rival.getNombre() + "!");
+				System.out.println(jugador.getNombre() + " no tiene efecto contra "+ rival.getNombre() + "!");
 			}
 			statsJugador *= multiplicador;
 			
 			System.out.println("Nuevo puntaje: ");
-			System.out.println(jugador.getNombre() + "-->" + (int)statsJugador + "puntos");
-			System.out.println(rival.getNombre() + "-->" + (int)statsRival + "puntos");
+			System.out.println(jugador.getNombre() + "-->" + (int)statsJugador + " puntos");
+			System.out.println(rival.getNombre() + "-->" + (int)statsRival + " puntos");
 			
 			if(statsJugador >= statsRival){
 				System.out.println("Ha ganado " + jugador.getNombre() + "!");
