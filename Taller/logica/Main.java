@@ -5,7 +5,11 @@
 
 package logica;
 
+//Clase principal que inicia la ejecucion del juego Pokemon. 
 public class Main {
+	/*
+	 * Metodo principal. Crea una instancia del juego y lo inicia.
+	 */
 	public static void main(String[]args) {
 		Juego juego = new Juego();
 		juego.iniciar();

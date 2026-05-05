@@ -2,18 +2,25 @@ package logica;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
+/*
+ * Clase que gestiona toda la logica de combate del juego.
+ * Se encarga de los enfrentamientos contra lideres de gimnasio y miembros del Alto Mando.
+ */
 public class Combate {
 	private Scanner teclado;
 	private ArrayList<Pokemon> pokedex;
-		
-	
+	/*
+	 * Constructor del gestor de combates.
+	 */
 	public Combate(Scanner teclado, ArrayList<Pokemon> pokedex) {
 		super();
 		this.teclado = teclado;
 		this.pokedex = pokedex;
 	}
-	
+	/*
+	 * Inicia el desafio completo contra un lider de gimnasio.
+	 * El jugador debe derrotar a todos los Pokemon del lider en secuencia.
+	 */
 	public boolean retarGimnasio(Jugador jugador, Gimnasio gimnasio) {
 		System.out.println("/n Desafiando a " + gimnasio.getLider() + "!!");
 		
@@ -35,24 +42,30 @@ public class Combate {
 			
 			boolean resultado = ejecutarCombate(jugador, activo, rival);
 			if(!resultado) {
+				//El jugador perdio este combate
 				if(!jugador.tieneEquipoDisponible()) {
 					System.out.println("Te has quedado sin pokemones en tu equipo!");
 					System.out.println("Volviendo al menu...");
 					return false;
 				}
 			}else {
+				//El rival fue derrotado, continuar con el siguiente
 				System.out.println(rival.getNombre() + " fue derrotado!");
 				if(i < nombresRival.size() - 1) {
 					System.out.println(gimnasio.getLider() + " saca a su siguiente Pokemon!");
 				}
 			}
 		}
-		System.out.println("/nHas derrotado a " + gimnasio.getLider() + "! Has ganado la medalla!");
+		//Derroto a todos los Pokemon del lider
+		System.out.println("/n Has derrotado a " + gimnasio.getLider() + "! Has ganado la medalla!");
 		gimnasio.setEstado("Derrotado");
 		jugador.setMedallas(jugador.getMedallas() + 1);
 		return true;
 		}
-	
+	/*
+	 * Inicia el desafio al Alto Mando de manera consecutiva
+	 * Si el jugador pierde o se rinde, no se puede continuar donde quedo.
+	 */
 		public boolean retarAltoMando(Jugador jugador, ArrayList<MiembroAltoMando> altoMando) {
 			System.out.println("n/ -- DESAFIO AL ALTO MANDO --");
 		
@@ -87,11 +100,14 @@ public class Combate {
 				System.out.println("Has derrotado a " + miembro.getNombre() + "!");
 			}
 		
-		System.out.println("n/FELICITACIONES! Has derrotado al Alto Mando! Eres el Campeon! ");
-		
-		return true;
+			System.out.println("n/FELICITACIONES! Has derrotado al Alto Mando! Eres el Campeon! ");
+			
+			return true;
 		}
-		
+		/*
+		 * Ejecuta un turno de combate entre el Pokemon activo del jugador y el rival.
+		 * El jugador puede atacar, cambiar de Pokemon o rendirse.
+		 */
 		private boolean ejecutarCombate(Jugador jugador, Pokemon activo, Pokemon rival) {
 			while(true) {
 				System.out.println("/n Que deseas hacer?");
@@ -102,15 +118,18 @@ public class Combate {
 				
 				int opcion = leerEntero();
 				if(opcion == 1) {
+					//Calcular combate
 					boolean gano = calcularBatalla(activo, rival);
 					if(gano) {
 						return true;
 					}else {
+						//El Pokemon del jugador fue derrotado
 						activo.setEstado("Debilitado");
 						System.out.println(activo.getNombre() + " ha sido debilitado...");
 						if(!jugador.tieneEquipoDisponible()) {
 							return false;
 						}
+						//Elegir otro Pokemon
 						activo = elegirPokemonActivo(jugador);
 						if(activo == null)return false;
 						System.out.println(jugador.getApodo() + " saca a " + activo.getNombre() + "!");
@@ -129,6 +148,10 @@ public class Combate {
 				}
 			}
 		}
+		/*
+		 * Calcula el resultado del ataque comparando stats totales con efectividad de tipos.
+		 * Imprime los stats resultantes y el ganador del efrentamiento.
+		 */
 		private boolean calcularBatalla(Pokemon jugador, Pokemon rival) {
 			double statsJugador = jugador.getTotalStats();
 			double statsRival = rival.getTotalStats();
@@ -157,53 +180,68 @@ public class Combate {
 			}else {
 				System.out.println("Ha ganado " + rival.getNombre() + "!");
 				return false;
-		}
-	}
-	private Pokemon seleccionarPokemonEquipo(Jugador jugador, Pokemon actual) {
-		ArrayList<Pokemon> equipo = jugador.getEquipo();
-		System.out.println("Elige un Pokemon: ");
-		int indice = 1;
-		for(Pokemon p : equipo) {
-			String disponible;
-			if(p.estaVivo()){
-				disponible = "";
-				
-			} else {
-				disponible = " [Debilitado]";
 			}
-			System.out.println(indice + ") " + p.getNombre() + disponible);
-			indice++;
 		}
-		int eleccion = leerEntero();
-		if(eleccion < 1 || eleccion > equipo.size()) {
-			System.out.println("Eleccion invalida.");
-			return null;
-		}
-		Pokemon elegido = equipo.get(eleccion - 1);
-		if(!elegido.estaVivo()) {
-			System.out.println(elegido.getNombre() + " esta debilitado y no puede combatir.");
-			return null;
-		}
-		if(elegido == actual) {
-			System.out.println("Ese Pokemon ya esta en combate.");
-			return null;
+		/*
+		 * Muestra el equipo del jugador y le pide que seleccione un Pokemon vivo
+		 * distinto al que tiene actualmente en combate. 
+		 */
+		private Pokemon seleccionarPokemonEquipo(Jugador jugador, Pokemon actual) {
+			ArrayList<Pokemon> equipo = jugador.getEquipo();
+			System.out.println("Elige un Pokemon: ");
+			int indice = 1;
+			for(Pokemon p : equipo) {
+				String disponible;
+				if(p.estaVivo()){
+					disponible = "";
+					
+				} else {
+					disponible = " [Debilitado]";
+				}
+				System.out.println(indice + ") " + p.getNombre() + disponible);
+				indice++;
 			}
-		return elegido;
+			int eleccion = leerEntero();
+			if(eleccion < 1 || eleccion > equipo.size()) {
+				System.out.println("Eleccion invalida.");
+				return null;
+			}
+			Pokemon elegido = equipo.get(eleccion - 1);
+			if(!elegido.estaVivo()) {
+				System.out.println(elegido.getNombre() + " esta debilitado y no puede combatir.");
+				return null;
+			}
+			if(elegido == actual) {
+				System.out.println("Ese Pokemon ya esta en combate.");
+				return null;
+			}
+			return elegido;
 		}
+		/*
+		 * Elige automaticamente el primer Pokemon vivo del equipo del jugador
+		 */
 		private Pokemon elegirPokemonActivo(Jugador jugador) {
 			for(Pokemon p : jugador.getEquipo()) {
 				if(p.estaVivo())return p;
 			}
 			return null;
 		}
+		/*
+		 * Busca un Pokemon rival en la Pokedex por nombre.
+		 * Si no lo encuentra, crea uno basico para no bloquear el juego
+		 */
 		private Pokemon buscarPokemonRival(String nombre) {
 			for(Pokemon p : pokedex) {
 				if(p.getNombre().equalsIgnoreCase(nombre)) {
-					return new Pokemon(p);
+					return new Pokemon(p);//Copia para no modificar el original
 				}
 			}
+			//Si no esta en la pokedex, crear uno generico para no romper el juego
 			return new Pokemon(nombre, "none", 0, 45, 45, 40, 35, 35, 45, "Normal");
 		}
+		/*
+		 * Leer un entero desde la consola con manejo de errores para evitar crashes
+		 */
 		private int leerEntero() {
 			try {
 				return Integer.parseInt(teclado.nextLine().trim());

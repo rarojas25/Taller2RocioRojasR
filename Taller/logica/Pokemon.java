@@ -1,5 +1,9 @@
 package logica;
 
+/*
+ * Clase que representa un Pokemon con todas sus estadisticas, tipo, habitat y estado.
+ * Almacena la informacion cargada desde Pokedex,txt y el estado de batalla del jugador.
+ */
 public class Pokemon {
 	private String nombre;
 	private String habitat;
@@ -12,7 +16,9 @@ public class Pokemon {
 	private int velocidad;
 	private String tipo;
 	private String estado;
-	
+	/*
+	 * Constructor principal para crear un Pokemon desde la Pokedex.
+	 */
 	public Pokemon(String nombre, String habitat, double porcentajeAparicion, int vida, int ataque, int defensa,
 			int ataqueEspecial, int defensaEspecial, int velocidad, String tipo) {
 		super();
@@ -28,6 +34,9 @@ public class Pokemon {
 		this.tipo = tipo;
 		this.estado = "Vivo";
 	}
+	/*
+	 * Constructor de copia. Crea un nuevo Pokemon con los mismos datos que otro.
+	 */
 	public Pokemon(Pokemon otro) {
 		super();
 		this.nombre = otro.nombre;
@@ -42,11 +51,17 @@ public class Pokemon {
 		this.tipo = otro.tipo;
 		this.estado = otro.estado;
 	}
+	/*
+	 * Retorna la suma total de las seis estadisticas del Pokemon.
+	 */
 	public int getTotalStats() {
 		return vida + ataque + defensa + ataqueEspecial + defensaEspecial + velocidad;
 	}
 	public boolean estaVivo() {
 		return estado.equals("Vivo");
+	/*
+	 * Getters y Setters.
+	 */
 	}
 	public String getNombre() {
 		return nombre;

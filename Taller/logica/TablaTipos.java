@@ -1,7 +1,12 @@
 package logica;
-
+/*
+ * Clase utilitaria que contiene la tabla de efectividad de tipos Pokemon.
+ * Filas: tipo del Pokemon del jugador (atacante).
+ * Columnas: tipo del Pokemon rival (defensor).
+ * retorna un multiplicador: 2.0 (super efectivo), 1.0 (nomarl), 0.5 (poco eficaz), 0.0 (sin efecto).
+ */
 public class TablaTipos {
-	
+	//Nombres de los tipos en el mismo orden que la matriz
 	public static final String[] TIPOS = {
 			"Normal",//0
 			"Fuego",//1
@@ -23,7 +28,7 @@ public class TablaTipos {
 			"Hada",//17
 			
 	};
-    // Matriz de efectividad
+    // Matriz de efectividad [atacante][defensor]
     private static final double[][] EFECTIVIDAD = {
         // NOR  FUE  AGU  PLA  ELE  HIE  LUC  VEN  TIE  VOL  PSI  BIC  ROC  FAN  DRA  ACE  SIN  HAD
         {  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.0, 1.0, 0.5, 1.0, 1.0 }, // NORMAL
@@ -45,18 +50,26 @@ public class TablaTipos {
         {  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 0.5, 0.5 }, // SINIESTRO
         {  1.0, 0.5, 1.0, 1.0, 1.0, 1.0, 2.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 0.5, 2.0, 1.0 }  // HADA
     };
+    /*
+     * Obtiene el multiplicador de efectividad al atacar.
+     * Basado en el tipo del atacante (jugador) vs el tipo del defensor (rival)
+     */
     public static double getEfectividad(String tipoAtacante, String tipoDefensor) {
     	int filaAtacante = getIndiceTipo(tipoAtacante);
     	int columnaDefensor = getIndiceTipo(tipoDefensor);
     	return EFECTIVIDAD[filaAtacante][columnaDefensor];
     }
+    /*
+     * Busca el indice de un tipo en el arreglo de tipos.
+     * Si no se encuentra, retorna 0 (Normal) como tipo por defecto.
+     */
     private static int getIndiceTipo(String tipo) {
     	for(int i = 0; i < TIPOS.length; i++) {
     		if(TIPOS[i].equalsIgnoreCase(tipo)) {
     			return i;
     		}
     	}
-		return 0; 
+		return 0;//Normal por defecto
     }
     
 }

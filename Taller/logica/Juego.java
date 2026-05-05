@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
-
+/*
+ * Clase principal que controla el flujo del juego.
+ * Gestiona todos los menus, carga de datos y accidentes disponibles del jugador.
+ */
 public class Juego {
 	private Scanner teclado;
 	private GestorArchivos gestor;
@@ -15,7 +18,9 @@ public class Juego {
 	private ArrayList<Pokemon> pokedex;
 	private ArrayList<Gimnasio> gimnasios;
 	private ArrayList<MiembroAltoMando> altoMando;
-	
+	/*
+	 * Constructor del juego. Inicializa herramientas y carga todos los archivos de datos.
+	 */
 	public Juego() {
 		teclado = new Scanner(System.in);
 		gestor = new GestorArchivos();
@@ -27,6 +32,10 @@ public class Juego {
 		altoMando = gestor.leerAltoMando();
 		combate = new Combate(teclado, pokedex);
 	}
+	/*
+	 * Inicia el juego mostrando el menu de bienvenida
+	 * Permite continuar, nueva partida o salir.
+	 */
 	public void iniciar() {
 		boolean corriendo = true;
 		while(corriendo) {
@@ -54,7 +63,12 @@ public class Juego {
 			}
 		teclado.close();
 		}
+	/*
+	 * Carga la partida guardada en Registros,txt.
+	 * Si existe y el valida, da la bienvenida y abre el menu del juego.
+	 */
 	private void menuContinuar() {
+		//Se pasa gimnasios para que cargaPartida pueda restaurar los estados
 		jugador = gestor.cargarPartida(pokedex, gimnasios);
 		if(jugador == null) {
 			System.out.println("No se encontro una partida guardada. Inicia una nueva partida.");
@@ -63,17 +77,24 @@ public class Juego {
 		System.out.println("Bienvenido de vuelta " + jugador.getApodo() + "!!");
 		menuJuego();
 	}
+	/*
+	 * Crea una nueva partida solicitando el apodo del jugador.
+	 * Reinicia los estados de todos los gimnasios antes de comenzar.
+	 */
 	private void menuNuevaPartida() {
 		System.out.println("Ingrese Apodo: ");
 		String apodo = teclado.nextLine().trim();
 		jugador = new Jugador(apodo);
-		
+		//Reinicia gimnasios para que la nueva partida comience limpia
 		for(Gimnasio g : gimnasios) {
 			g.setEstado("Sin derrotar");
 		}
 		System.out.println("Bienvenido " + jugador.getApodo() + "!!");
 		menuJuego();
 	}
+	/*
+	 * Menu principal con todas las opciones disponibles para el jugador.
+	 */
 	private void menuJuego() {
 		boolean enJuego = true;
 		while(enJuego) {
@@ -123,7 +144,10 @@ public class Juego {
 			}
 		}
 	}
-	
+	/*Opcion 1 - Revisar Equipo
+	 * Muestra el nombre, tipo, stats totales y estado de cada Pokemon del equipo activo.
+	 * El equipo activo son los primeros 6 Pokemon de la lista del jugador.
+	 */
 	private void revisarEquipo() {
 		ArrayList<Pokemon> equipo = jugador.getEquipo();
 		if(equipo.isEmpty()) {
@@ -136,7 +160,10 @@ public class Juego {
 			System.out.println((i+ 1) + ") " + p.getNombre() + " | " + p.getTipo() + " |Stats totales: " + p.getTotalStats() + " [" + p.getEstado() + "]");		
 		}
 	}
-	
+	/*Opcion 2- Salir a Capturar
+	 * Muestra las zonas disponibles y genera un Pokemon aleatorio segun los 
+	 * pocentajes de aparicion de esa zona. El jugador puede capturarlo o huir.
+	 */
 	private void salirACapturar() {
 		boolean enZonas = true;
 		while(enZonas) {
@@ -160,6 +187,7 @@ public class Juego {
 				System.out.println("Zona invalida.");
 				continue;
 			}
+			//Obtener la zona elegida recorriendo la LinkedList
 			String zonaElegida = null;
 			int contador = 1;
 			for(String zona : habitats){
@@ -200,6 +228,10 @@ public class Juego {
 			enZonas = false;
 		}
 	}
+	/*
+	 * Genera un Pokemon aleatorio de una zona respetando los porcetajes de aparcion.
+	 * Acumula los porcentajes y elige segun un numero al azar entre 0.0 y 1.0 
+	 */
 	private Pokemon generarPokemonAleatorio(String zona) {
 		ArrayList<Pokemon> pokemonsZona = new ArrayList<>();
 		for(Pokemon p : pokedex) {
@@ -220,6 +252,11 @@ public class Juego {
 		}
 		return new Pokemon(pokemonsZona.get(pokemonsZona.size() - 1));
 	}
+	/*Opcion 3 - Acceso al PC
+	 * Muestra todos los Pokemon del jugador numerados e indica cuales pertenecen
+	 * al equipo activo (primeros 6) y cuales estan en el PC.
+	 * Permite intercambiar dos Pokemon de la lista.
+	 */
 	private void accesoPC() {
 		boolean enPC= true;
 		while(enPC) {
@@ -262,6 +299,10 @@ public class Juego {
 			}
 		}
 	}
+	/*Opcion 4 - Retar Gimnasio
+	 * Muestra todos los gimnasios con su estado y permite al jugador retar al siguiente 
+	 * en orden. No se puede saltar lideres sin haber derrotado al anterior.
+	 */
 	private void retarGimnasio() {
 		boolean enGimnasios = true;
 		while(enGimnasios) {
@@ -285,6 +326,7 @@ public class Juego {
 			}
 			Gimnasio elegido =  gimnasios.get(eleccion - 1);
 			
+			//No se puede saltar lideres
 			if(eleccion > 1 && !gimnasios.get(eleccion - 2).estaDerrotado()) {
 				System.out.println("Calmado Entrenador!!! No puedes retar a " + elegido.getLider() + " sin haber derrotado a los lideres anteriores!!");
 				enGimnasios = false;
@@ -304,6 +346,10 @@ public class Juego {
 			enGimnasios = false;
 		}
 	}
+	/*Opcion 5 - Desafio al Alto Mando
+	 * Permite desafiar al Alto Mando si el jugador tiene las 8 medallas.
+	 * Los combates son consecutivos sin acceso al menu entre ellos.
+	 */
 	private void desafioAltoMando() {
 		if(jugador.getMedallas() < 8) {
 			System.out.println("Necesitas derrotar los 8 gimnsios primero!");
@@ -312,10 +358,17 @@ public class Juego {
 		}
 		combate.retarAltoMando(jugador, altoMando);
 	}
+	/*Opcion 6 - Curar Pokemon
+	 * Cura a todos los Pokemon debilitados del jugador, dejandolos listos para cambatir.
+	 */
 	private void curarPokemon() {
 		jugador.curarTodos();
 		System.out.println("Tu equipo se ha recuperado!");
 	}
+	/*Utilidad
+	 * Lee un numero entero desde consola con manejo de errores.
+	 * Evita que el programa crashee.
+	 */
 	private int leerEntero() {
 		try {
 			return Integer.parseInt(teclado.nextLine().trim());

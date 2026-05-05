@@ -7,14 +7,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
+/*
+ * Clase encargada de toda la lectura y escritura de archivos .txt del juego.
+ * Usa BufferedReader para leer y BufferedWritter para escribir/sobrescribir.
+ */
 public class GestorArchivos {
 	private static final String RUTA_REGISTROS = "Registros.txt";
 	private static final String RUTA_HABITATS = "Habitats.txt";
 	private static final String RUTA_POKEDEX = "Pokedex.txt";
 	private static final String RUTA_GIMNASIOS = "Gimnasios.txt";
 	private static final String RUTA_ALTO_MANDO = "Alto Mando.txt";
-	
+	/*
+	 * Leer los habitats disponibles desde Habitats.txt.
+	 * Se usa LinkedList porque el orden de insercion importa y el acceso es secuencial.
+	 */
 	public LinkedList<String> leerHabitats(){
 		LinkedList<String> habitats = new LinkedList<>();
 		try(BufferedReader br = new BufferedReader(new FileReader(RUTA_HABITATS))){
@@ -30,6 +36,10 @@ public class GestorArchivos {
 		}
 		return habitats;
 	}
+	/*
+	 * Lee todos los Pokemon desde Pokedex.txt.
+	 * Formato: nombre;habitat;porcentaje;vida;ataque;defensa;atkEsp;defEeps;vel;tipo
+	 */
 	public ArrayList<Pokemon> leerPokedex(){
 		ArrayList<Pokemon> pokedex = new ArrayList<>();
 		try(BufferedReader br = new BufferedReader(new FileReader(RUTA_POKEDEX))){
@@ -59,6 +69,10 @@ public class GestorArchivos {
 		}
 		return pokedex;
 	}
+	/*
+	 * Lee los gimnasios desde Gimnasios.txt.
+	 * Formato: N;Lider;Estado;cantPokemons;poke1;poke2;...
+	 */
 	public ArrayList<Gimnasio> leerGimnasios(){
 		ArrayList<Gimnasio> gimnasios = new ArrayList<>();
 		try(BufferedReader br = new BufferedReader(new FileReader(RUTA_GIMNASIOS))){
@@ -85,7 +99,10 @@ public class GestorArchivos {
 		}
 		return gimnasios;
 	}
-	
+	/*
+	 * Lee los miembros del Alto Mando desde Alto Mando.txt.
+	 * Formato: N;Nombre;poke1;poke2;...;poke6
+	 */
 	public ArrayList<MiembroAltoMando> leerAltoMando(){
 		ArrayList<MiembroAltoMando> altoMando = new ArrayList<>();
 		try(BufferedReader br = new BufferedReader(new FileReader(RUTA_ALTO_MANDO))){
@@ -111,6 +128,11 @@ public class GestorArchivos {
 		}
 		return altoMando;
 	}
+	/*
+	 * Carga partida guardada desde Registros.txt.
+	 * Primera linea: nombreCuenta;nombreUltimoLiderDerrotado (o "none")
+	 * Los gimnasios se marcan como derrotados en orden hasta llegar al utimo lider guardado.
+	 */
 	public Jugador cargarPartida(ArrayList<Pokemon> pokedex, ArrayList<Gimnasio> gimnasios) {
 		Jugador jugador = null;
 		try(BufferedReader br = new BufferedReader(new FileReader(RUTA_REGISTROS))){
@@ -122,11 +144,11 @@ public class GestorArchivos {
 			if(datosJugador.length < 1)return null;
 			
 			String apodo = datosJugador[0].trim();
-			
+			//Si el archivo tiene el valor por defecto, no hay partida real
 			if(apodo.isEmpty() || apodo.equalsIgnoreCase("Jugador"))return null;
 			
 			jugador = new Jugador(apodo);
-			
+			//Restaurar estados de gimnasios segun el ultimo lider derrotado guardado
 			if(datosJugador.length > 1) {
 				String ultimoLider = datosJugador[1].trim();
 				if(!ultimoLider.equalsIgnoreCase("none")) {
@@ -134,12 +156,13 @@ public class GestorArchivos {
 					for(Gimnasio g : gimnasios) {
 						g.setEstado("Derrotado");
 						medallas++;
-						
+						//Detener cuando encontramos el lider guardado 
 						if(g.getLider().equalsIgnoreCase(ultimoLider)) break;
 					}
 					jugador.setMedallas(medallas);
 				}
 			}
+			//Cargar los Pokemon del jugador
 			String linea;
 			while((linea = br.readLine()) != null) {
 				linea = linea.trim();
@@ -164,8 +187,14 @@ public class GestorArchivos {
 		}
 		return jugador;
 	}
+	/*
+	 * Guarda la partida sobrescribiendo Registros.txt.
+	 * Guarda el nombre del ultimo lider derrotado ( o "none") para reconstruir
+	 * el proceso al volver a cargar.
+	 */
 	public void guardarPartida(Jugador jugador, ArrayList<Gimnasio> gimnasios) {
 		try(BufferedWriter bw = new BufferedWriter(new FileWriter(RUTA_REGISTROS))){
+			//Determinar el ultimo lider derrotado
 			String ultimoLider = "none";
 			
 			for(Gimnasio g : gimnasios) {
@@ -184,7 +213,9 @@ public class GestorArchivos {
 			System.out.println("Error al guardar la partida: " + e.getMessage());
 		}
 	}
-	
+	/*
+	 * Busca un Pokemon por nombre en la lista de la Pokedex.
+	 */
 	public Pokemon buscarEnPokedex(ArrayList<Pokemon> pokedex, String nombre) {
 		for(Pokemon p : pokedex) {
 			if(p.getNombre().equalsIgnoreCase(nombre))return p;
