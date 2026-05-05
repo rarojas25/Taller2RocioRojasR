@@ -242,30 +242,7 @@ public class Juego {
 			enZonas = false;
 		}
 	}
-	/*
-	 * Genera un Pokemon aleatorio de una zona respetando los porcetajes de aparcion.
-	 * Acumula los porcentajes y elige segun un numero al azar entre 0.0 y 1.0 
-	 */
-	private Pokemon generarPokemonAleatorio(String zona) {
-		ArrayList<Pokemon> pokemonsZona = new ArrayList<>();
-		for(Pokemon p : pokedex) {
-			if(p.getHabitat().equalsIgnoreCase(zona) && p.getPorcentajeAparicion() > 0) {
-				pokemonsZona.add(p);
-			}
-		}
-		if(pokemonsZona.isEmpty()) return null;
-		
-		double valor = random.nextDouble();
-		double acumulado = 0;
-		
-		for(Pokemon p : pokemonsZona) {
-			acumulado += p.getPorcentajeAparicion();
-			if(valor <= acumulado) {
-				return new Pokemon(p);
-			}
-		}
-		return new Pokemon(pokemonsZona.get(pokemonsZona.size() - 1));
-	}
+	
 	/*Opcion 3 - Acceso al PC
 	 * Muestra todos los Pokemon del jugador numerados e indica cuales pertenecen
 	 * al equipo activo (primeros 6) y cuales estan en el PC.
