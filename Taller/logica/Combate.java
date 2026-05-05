@@ -28,6 +28,30 @@ public class Combate {
 		
 		for(int i = 0; i < nombresRival.size(); i++) {
 			Pokemon rival = buscarPokemonRival(nombresRival.get(i));
+			Pokemon miPokemon = elegirPokemonActivo(jugador);
+			
+			if(miPokemon != null) {
+				
+				double multiplicador = TablaTipos.obtenerEfectividad(miPokemon.getTipo(), rival.getTipo());
+				double dañoFinalJugador = miPokemon.getTotalStats() * multiplicador;
+				double dañoRival = rival.getTotalStats();
+				System.out.println("\n" + miPokemon.getNombre() + " usa su tipo " + miPokemon.getTipo() + " contra " + rival.getNombre() + " (" + rival.getTipo() + ")");
+				
+				if(multiplicador > 1.0) {
+					System.out.println("¡Es super efectivo!");
+				}else if(multiplicador < 1.0 && multiplicador > 0){
+					System.out.println("No es muy eficaz");
+				}else if(multiplicador == 0) {
+					System.out.println("¡No tiene efecto!");
+				}
+				if(dañoFinalJugador >= dañoRival) {
+					System.out.println("¡Haz derrotado a " + rival.getNombre() + "!");
+					rival.setEstado("Debilitado");
+				}else {
+					System.out.println("¡Tu " + miPokemon.getNombre() + " ha sido debilitado!");
+					miPokemon.setEstado("Debilitado");
+				}
+			}
 			if(rival == null) continue;
 			
 			System.out.println(gimnasio.getLider() + " saca a " + rival.getNombre() + "!");

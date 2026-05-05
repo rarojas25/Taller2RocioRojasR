@@ -71,6 +71,18 @@ public class TablaTipos {
     	}
 		return 0;//Normal por defecto
     }
+    public static double obtenerEfectividad(String tipoAtacante, String tipoDefensor) {
+    	int fila = -1;
+    	int col = -1;
+    	for(int i = 0; i < TIPOS.length; i++) {
+    		if(TIPOS[i].equalsIgnoreCase(tipoAtacante)) fila = i;
+    			if(TIPOS[i].equalsIgnoreCase(tipoDefensor)) col = i;
+    		}
+    	if(fila != -1 && col != -1) {
+    		return EFECTIVIDAD[fila][col];
+    	}
+    	return 1.0;
+    }
     
 }
 

@@ -188,20 +188,34 @@ public class Juego {
 				continue;
 			}
 			//Obtener la zona elegida recorriendo la LinkedList
-			String zonaElegida = null;
-			int contador = 1;
-			for(String zona : habitats){
-				if(contador == eleccion) {
-					zonaElegida = zona;
-					break;
-				}		
-				contador++;
+			
+			ArrayList<Pokemon> posibles = new ArrayList<>();
+			for(Pokemon p : pokedex) {
+				if(p.getHabitat().equalsIgnoreCase(habitats.get(eleccion - 1))) {
+					posibles.add(p);
+				}
 			}
-			Pokemon aparecido = generarPokemonAleatorio(zonaElegida);
-			if(aparecido == null) {
-				System.out.println("No hay Pokemon en esta zona.Intenta en otra.");
-				enZonas = false;
-				continue;
+			double aleatorio = random.nextDouble();
+			double acumulado = 0.0;
+			Pokemon aparecido = null;
+			
+			for(Pokemon p : posibles) {
+				acumulado += p.getPorcentajeAparicion();
+				if(aleatorio <= acumulado) {
+					aparecido = p;
+					break;
+				}
+			}
+			if(aparecido != null) {
+				System.out.println("\n ¡Un " + aparecido.getNombre() + " salvaje ha aparecido!" );
+			if(jugador.tienePokemon(aparecido.getNombre())) {
+				System.out.println("Ya tienes a " + aparecido.getNombre() + ". No puedes capturarlo de nuevo." );
+			}else {
+				jugador.agregarPokemon(new Pokemon(aparecido));
+				System.out.println("¡" + aparecido.getNombre() + " capturado con exito!");
+			}
+			}else {
+				System.out.println("No se encontro ningunn Pokemon en esta zona.");
 			}
 			System.out.println("\n Oh!! Ha aparecido un increible " + aparecido.getNombre() + "!!");
 			System.out.println("\n Que deseas hacer?\n");
